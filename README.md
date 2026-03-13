@@ -29,6 +29,21 @@ const decrypted = await Mailbox.decryptPayload(bob.privateKey, encrypted);
 console.log(JSON.parse(decrypted));
 ```
 
+## On-chain mailbox transport helpers
+
+If your mailbox events store `bytes envelope`, use helpers to roundtrip safely:
+
+```ts
+const encrypted = await Mailbox.encryptPayload(receiverPubKey, payload);
+
+// before publishBorrowerPayload/publishProviderPayload
+const envelopeBytes = Mailbox.envelopeToBytes(encrypted);
+
+// after reading event bytes
+const restoredEnvelope = Mailbox.envelopeFromBytes(envelopeBytes);
+const plaintext = await Mailbox.decryptPayload(privateKey, restoredEnvelope);
+```
+
 ## Development
 
 ```bash

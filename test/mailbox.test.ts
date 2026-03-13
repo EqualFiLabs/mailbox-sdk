@@ -11,12 +11,12 @@ describe('Mailbox SDK', () => {
 
   it('should encrypt and decrypt a string payload using compressed public keys', async () => {
     const bob = Mailbox.generateKeys();
-    const payload = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC...";
+    const payload = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC...';
 
     // Alice encrypts for Bob using Bob's COMPRESSED public key (as stored in registry)
     const encrypted = await Mailbox.encryptPayload(bob.compressedPublicKey, payload);
-    
-    // The envelope should be a stringified hex payload from eth-crypto
+
+    // The envelope should be a stringified payload from eth-crypto
     expect(typeof encrypted).toBe('string');
     expect(encrypted.length).toBeGreaterThan(100);
 
@@ -27,13 +27,37 @@ describe('Mailbox SDK', () => {
 
   it('should encrypt and decrypt a JSON object payload', async () => {
     const bob = Mailbox.generateKeys();
-    const payload = { ip: "192.168.1.100", user: "ubuntu" };
+    const payload = { ip: '192.168.1.100', user: 'ubuntu' };
 
     const encrypted = await Mailbox.encryptPayload(bob.compressedPublicKey, payload);
     const decryptedStr = await Mailbox.decryptPayload(bob.privateKey, encrypted);
-    
+
     const decryptedObj = JSON.parse(decryptedStr);
     expect(decryptedObj.ip).toBe(payload.ip);
     expect(decryptedObj.user).toBe(payload.user);
+  });
+
+  it('should convert envelopes to on-chain bytes and back', async () => {
+    const bob = Mailbox.generateKeys();
+    const payload = { region: 'us-east-1', provider: 'venice' };
+
+    const encrypted = await Mailbox.encryptPayload(bob.compressedPublicKey, payload);
+    const asBytes = Mailbox.envelopeToBytes(encrypted);
+    const restoredEnvelope = Mailbox.envelopeFromBytes(asBytes);
+    const decrypted = await Mailbox.decryptPayload(bob.privateKey, restoredEnvelope);
+
+    expect(asBytes).toMatch(/^0x[a-fA-F0-9]+$/);
+    expect(JSON.parse(decrypted)).toEqual(payload);
+  });
+
+  it('should reject invalid envelope bytes', () => {
+    expect(() => Mailbox.envelopeFromBytes('0x123')).toThrow(/Invalid envelope bytes/);
+  });
+
+  it('should reject malformed encrypted payload strings', async () => {
+    const bob = Mailbox.generateKeys();
+    await expect(Mailbox.decryptPayload(bob.privateKey, 'not-an-envelope')).rejects.toThrow(
+      /Invalid encrypted payload format/
+    );
   });
 });

@@ -1,0 +1,52 @@
+{
+  "name": "@equalfi/mailbox-sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for encrypted mailbox payloads used by EqualFi agents",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "equalfi",
+    "sdk",
+    "mailbox",
+    "encryption",
+    "ecies",
+    "secp256k1"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EqualFiLabs/mailbox-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/EqualFiLabs/mailbox-sdk/issues"
+  },
+  "homepage": "https://github.com/EqualFiLabs/mailbox-sdk#readme",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "eth-crypto": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}

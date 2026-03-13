@@ -6,6 +6,16 @@ This package wraps `eth-crypto` ECIES primitives for:
 - keypair generation
 - payload encryption (string or JSON)
 - payload decryption
+- envelope validation + bytes roundtrip helpers for on-chain mailbox transport
+
+## Public API (frozen for v0.2.x)
+
+- `Mailbox.generateKeys()`
+- `Mailbox.encryptPayload(receiverPubKeyHex, payload)`
+- `Mailbox.decryptPayload(privateKeyHex, encryptedPayloadString)`
+- `Mailbox.parseEnvelope(encryptedPayloadString)`
+- `Mailbox.envelopeToBytes(encryptedPayloadString)`
+- `Mailbox.envelopeFromBytes(envelopeBytesHex)`
 
 ## Install
 
